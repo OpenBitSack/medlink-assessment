@@ -1,6 +1,8 @@
 # MedLink — AI Clinical Interview Platform
 
-A healthcare platform prototype featuring an AI voice agent for structured patient interviews, with real-time transcription, session recovery, and a clinician dashboard.
+A working prototype of [MedLink Global's](https://medlink.global/) AI-powered patient interview system. The platform features **Delfia**, an AI voice agent that conducts structured clinical interviews, with real-time transcription, session recovery, and a clinician dashboard for longitudinal patient history.
+
+The UI follows MedLink Global's brand identity — light purple palette, Noto Serif headings, and the same professional-yet-approachable aesthetic as [medlink.global](https://medlink.global/).
 
 ## Quick Start
 
@@ -59,7 +61,7 @@ npm run dev
 ```
 
 The app will be available at:
-- **Interview UI**: http://localhost:5173
+- **Patient Interview**: http://localhost:5173
 - **Clinician Dashboard**: http://localhost:5173/dashboard
 - **Backend API**: http://localhost:3001
 
@@ -83,7 +85,7 @@ Medlink-assessment/
 │   │   │   ├── session.service.ts     # Session management & recovery
 │   │   │   ├── transcript.service.ts  # Transcript stitching & dedup
 │   │   │   ├── rateLimiter.service.ts # Concurrent session management
-│   │   │   └── mockAI.service.ts      # Mock clinical interview agent
+│   │   │   └── mockAI.service.ts      # Mock Delfia voice agent
 │   │   ├── middleware/
 │   │   │   └── error.ts              # Error handling
 │   │   └── types/
@@ -124,9 +126,10 @@ Medlink-assessment/
 
 ## Features
 
-### Part 1 — Patient Interview Experience
+### Part 1 — Patient Interview Experience (Delfia)
+- **MedLink-branded UI** — light purple palette, Noto Serif headings, matching [medlink.global](https://medlink.global/) design language
 - **Mobile-first design** optimized for phones — large touch targets, minimal chrome, safe-area support
-- **AI state indicator** — animated orb communicates listening (green), thinking (amber), speaking (purple)
+- **AI state indicator** — animated orb communicates Delfia's state: listening (green), thinking (amber), speaking (brand purple)
 - **Session lifecycle** — preparing → in-progress → interrupted → resuming → completed
 - **Uncomfortable silence handling** — comfort messages after 15s of silence; "Reflecting on what you shared..." during processing
 - **Crisis detection** — suicidal ideation keywords trigger immediate crisis resources (988 Lifeline)
@@ -142,7 +145,7 @@ Medlink-assessment/
 - **Color-coded** by event type (psychiatric meds, non-psychiatric meds, medical events, social/life events)
 - **Filtering** — by category, status (active/completed), medication type toggle
 - **Collapsible years** — click year headers to collapse/expand
-- **Hover tooltips** — detailed event information on hover
+- **Hover tooltips** — detailed event information; auto-flips above bar when near bottom of chart
 - **Handles edge cases** — ongoing events (striped bars), single-day events (dot markers), overlapping events
 
 ---
@@ -182,7 +185,7 @@ Medlink-assessment/
 | `request_comfort` | Client → Server | Request comfort message |
 | `session_state` | Server → Client | Full session state sync |
 | `session_status` | Server → Client | Status change notification |
-| `ai_state_change` | Server → Client | AI state transition |
+| `ai_state_change` | Server → Client | AI state transition (Delfia) |
 | `ai_message` | Server → Client | AI speech content |
 | `ai_comfort` | Server → Client | Comfort/reassurance message |
 | `transcript_update` | Server → Client | New transcript entry |
@@ -196,8 +199,66 @@ Medlink-assessment/
 |-------|-----------|-----------|
 | Frontend | React 18, TypeScript, Vite | Fine-grained UI control for interview UX |
 | Styling | Tailwind CSS 4 | Utility-first, mobile-first, rapid iteration |
+| Typography | Noto Serif + Inter | Matches MedLink Global's serif/sans-serif pairing |
 | Animations | Framer Motion | Smooth AI state transitions |
 | Backend | Express 5, TypeScript | Lightweight, focused on business logic |
 | Real-time | Socket.IO | Bidirectional with automatic reconnection |
 | Database | SQLite (better-sqlite3) | Zero-config for prototype; production → PostgreSQL |
 | Charts | Custom (CSS + React) | Lightweight Gantt without heavy dependencies |
+
+---
+
+## Deployment (Free Tier)
+
+The app is configured for **Vercel** (frontend) + **Render** (backend).
+
+### Step 1: Push to GitHub
+
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+gh repo create medlink-assessment --public --source=. --push
+```
+
+### Step 2: Deploy Backend on Render
+
+1. Go to [render.com](https://render.com) → **New** → **Web Service**
+2. Connect your GitHub repo
+3. Set **Root Directory** to `backend`
+4. Configure:
+   - **Build Command:** `npm install && npm run build`
+   - **Start Command:** `node dist/index.js`
+   - **Plan:** Free
+5. Add environment variables:
+   | Key | Value |
+   |-----|-------|
+   | `NODE_ENV` | `production` |
+   | `CORS_ORIGIN` | `https://your-app.vercel.app` (update after Vercel deploy) |
+6. Deploy — note your backend URL (e.g. `https://medlink-backend.onrender.com`)
+
+> Alternatively, click **New** → **Blueprint** and point to the `render.yaml` at the repo root.
+
+### Step 3: Deploy Frontend on Vercel
+
+1. Go to [vercel.com](https://vercel.com) → **New Project** → Import your GitHub repo
+2. Set **Root Directory** to `frontend`
+3. Framework Preset will auto-detect **Vite**
+4. Add one environment variable:
+   | Key | Value |
+   |-----|-------|
+   | `VITE_API_URL` | `https://medlink-backend.onrender.com` (your Render URL) |
+5. Deploy
+
+### Step 4: Update Backend CORS
+
+Go back to Render → your backend service → **Environment** → update:
+```
+CORS_ORIGIN=https://your-app.vercel.app
+```
+
+### Notes
+
+- **Cold starts**: Render free tier sleeps after 15 min of inactivity. First request takes ~30s.
+- **SQLite persistence**: Data resets on each Render deploy (free tier has no persistent disk). For durable storage, swap to [Turso](https://turso.tech/) (free SQLite-over-HTTP) or add a Render persistent disk ($0.25/GB/mo).
+- **WebSocket support**: Both Render and Vercel handle WebSocket connections out of the box.

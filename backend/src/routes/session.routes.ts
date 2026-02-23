@@ -9,7 +9,7 @@ function param(val: string | string[]): string {
 }
 
 router.post('/', (req: Request, res: Response) => {
-  const { patient_id } = req.body;
+  const { patient_id, force_new } = req.body;
 
   if (!patient_id) {
     res.status(400).json({ error: 'patient_id is required' });
@@ -18,14 +18,18 @@ router.post('/', (req: Request, res: Response) => {
 
   const existing = sessionService.getActiveSessionForPatient(patient_id);
   if (existing) {
-    const recovery = sessionService.checkSessionRecovery(existing.id);
-    if (recovery.can_resume) {
-      res.json({
-        session: existing,
-        resumable: true,
-        message: 'You have an active session that can be resumed.',
-      });
-      return;
+    if (force_new) {
+      sessionService.updateSessionStatus(existing.id, 'abandoned');
+    } else {
+      const recovery = sessionService.checkSessionRecovery(existing.id);
+      if (recovery.can_resume) {
+        res.json({
+          session: existing,
+          resumable: true,
+          message: 'You have an active session that can be resumed.',
+        });
+        return;
+      }
     }
   }
 

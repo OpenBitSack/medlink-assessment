@@ -17,7 +17,7 @@ export function TranscriptDisplay({ entries, currentAIMessage }: TranscriptDispl
   if (entries.length === 0 && !currentAIMessage) return null;
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 max-h-[40vh]">
+    <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 max-h-[40vh]">
       <AnimatePresence initial={false}>
         {entries.map((entry, i) => (
           <motion.div
@@ -28,14 +28,14 @@ export function TranscriptDisplay({ entries, currentAIMessage }: TranscriptDispl
             className={`flex ${entry.speaker === 'patient' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+              className={`max-w-[85%] rounded-xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
                 entry.speaker === 'patient'
-                  ? 'bg-primary/20 text-text-primary rounded-br-md'
-                  : 'bg-surface-lighter text-text-primary rounded-bl-md'
+                  ? 'bg-brand/10 text-text-primary border border-brand/15 rounded-br-sm'
+                  : 'bg-surface-white text-text-primary border border-surface-border rounded-bl-sm'
               }`}
             >
-              <p className="text-[10px] font-medium uppercase tracking-wider mb-1 opacity-50">
-                {entry.speaker === 'ai' ? 'Dr. AI' : 'You'}
+              <p className="text-[10px] font-semibold uppercase tracking-wider mb-1.5 text-text-muted">
+                {entry.speaker === 'ai' ? 'Dr. Delfia' : 'You'}
               </p>
               {entry.content}
             </div>

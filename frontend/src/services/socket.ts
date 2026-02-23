@@ -4,7 +4,8 @@ let socket: Socket | null = null;
 
 export function getSocket(): Socket {
   if (!socket) {
-    socket = io(window.location.origin, {
+    const serverUrl = import.meta.env.VITE_API_URL || window.location.origin;
+    socket = io(serverUrl, {
       transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: 10,

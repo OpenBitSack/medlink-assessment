@@ -23,6 +23,14 @@ export function initializeWebSocket(httpServer: HttpServer): SocketIOServer {
     let heartbeatInterval: ReturnType<typeof setInterval> | null = null;
 
     socket.on('join_session', async (data: { session_id: string }) => {
+      // Leave old session room if switching sessions
+      if (currentSessionId && currentSessionId !== data.session_id) {
+        socket.leave(currentSessionId);
+      }
+      if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+      }
+
       currentSessionId = data.session_id;
       socket.join(data.session_id);
 

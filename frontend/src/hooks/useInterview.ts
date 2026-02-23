@@ -14,7 +14,7 @@ interface UseInterviewReturn {
   estimatedWait: number | null;
   isConnected: boolean;
   error: string | null;
-  startSession: (patientId: string) => Promise<void>;
+  startSession: (patientId: string, forceNew?: boolean) => Promise<void>;
   sendMessage: (content: string) => void;
   resumeSession: (sessionId: string) => Promise<void>;
   requestComfort: () => void;
@@ -32,19 +32,28 @@ export function useInterview(): UseInterviewReturn {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const queuePollRef = useRef<ReturnType<typeof setInterval>>();
+  const activeSessionIdRef = useRef<string | null>(null);
+  const sessionStatusRef = useRef<SessionStatus | null>(null);
 
+  // Keep ref in sync so the disconnect handler always sees latest status
+  useEffect(() => {
+    sessionStatusRef.current = sessionStatus;
+  }, [sessionStatus]);
+
+  // Register socket listeners once on mount — no dependency on sessionStatus
   useEffect(() => {
     const socket = getSocket();
 
     socket.on('connect', () => setIsConnected(true));
     socket.on('disconnect', () => {
       setIsConnected(false);
-      if (sessionStatus === 'in_progress') {
+      if (sessionStatusRef.current === 'in_progress') {
         setSessionStatus('interrupted');
       }
     });
 
     socket.on('session_state', (data: { session: Session }) => {
+      if (activeSessionIdRef.current && data.session.id !== activeSessionIdRef.current) return;
       setSession(data.session);
       setSessionStatus(data.session.status);
       setAiState(data.session.ai_state);
@@ -101,20 +110,37 @@ export function useInterview(): UseInterviewReturn {
         clearInterval(queuePollRef.current);
       }
     };
-  }, [sessionStatus]);
+  }, []);
 
-  const startSession = useCallback(async (patientId: string) => {
+  const joinSession = useCallback((sessionId: string) => {
+    activeSessionIdRef.current = sessionId;
+    const socket = getSocket();
+    socket.emit('join_session', { session_id: sessionId });
+  }, []);
+
+  const startSession = useCallback(async (patientId: string, forceNew = false) => {
     try {
       setError(null);
-      const result = await api.createSession(patientId);
+
+      if (forceNew) {
+        setTranscript([]);
+        setCurrentAIMessage(null);
+        setComfortMessage(null);
+        setAiState('idle');
+        setSessionStatus('preparing');
+      }
+
+      const result = await api.createSession(patientId, forceNew);
 
       if (result.resumable) {
         setSession(result.session);
         setSessionStatus(result.session.status);
+        activeSessionIdRef.current = result.session.id;
         return;
       }
 
       setSession(result.session);
+      activeSessionIdRef.current = result.session.id;
 
       if (result.queued) {
         setSessionStatus('waiting');
@@ -128,8 +154,7 @@ export function useInterview(): UseInterviewReturn {
               setQueuePosition(null);
               setEstimatedWait(null);
               clearInterval(queuePollRef.current);
-              const socket = getSocket();
-              socket.emit('join_session', { session_id: result.session.id });
+              joinSession(result.session.id);
             } else {
               setQueuePosition(pos.position);
               setEstimatedWait(pos.estimated_wait_seconds);
@@ -140,19 +165,18 @@ export function useInterview(): UseInterviewReturn {
         }, 5000);
       } else {
         setSessionStatus('preparing');
-        const socket = getSocket();
-        socket.emit('join_session', { session_id: result.session.id });
+        joinSession(result.session.id);
       }
     } catch (err: any) {
       setError(err.message);
     }
-  }, []);
+  }, [joinSession]);
 
   const sendMessage = useCallback((content: string) => {
-    if (!session) return;
+    if (!activeSessionIdRef.current) return;
     const socket = getSocket();
-    socket.emit('patient_message', { content, session_id: session.id });
-  }, [session]);
+    socket.emit('patient_message', { content, session_id: activeSessionIdRef.current });
+  }, []);
 
   const resumeSession = useCallback(async (sessionId: string) => {
     try {
@@ -166,19 +190,18 @@ export function useInterview(): UseInterviewReturn {
       } else {
         setSession(result.session);
         setSessionStatus('resuming');
-        const socket = getSocket();
-        socket.emit('join_session', { session_id: sessionId });
+        joinSession(sessionId);
       }
     } catch (err: any) {
       setError(err.message);
     }
-  }, []);
+  }, [joinSession]);
 
   const requestComfort = useCallback(() => {
-    if (!session) return;
+    if (!activeSessionIdRef.current) return;
     const socket = getSocket();
-    socket.emit('request_comfort', { session_id: session.id });
-  }, [session]);
+    socket.emit('request_comfort', { session_id: activeSessionIdRef.current });
+  }, []);
 
   return {
     session,

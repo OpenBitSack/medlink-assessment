@@ -1,5 +1,19 @@
 # Key Decisions & Trade-offs
 
+## Design Language
+
+### Aligning with MedLink Global's Brand Identity
+The UI is designed to match [MedLink Global's production brand](https://medlink.global/). Key decisions:
+- **Light theme** with a soft purple background (`#faf5ff`) — consistent with MedLink's clean, clinical aesthetic. Light backgrounds communicate openness and trust in a healthcare context, and they don't compete visually with product content.
+- **Brand purple (`#7526c3`)** as the primary accent color, paired with deep purple (`#1a0738`) for text and primary buttons — directly sourced from medlink.global.
+- **Noto Serif for headings, Inter for body text** — mirrors MedLink's serif/sans-serif pairing that balances medical gravitas with modern readability.
+- **Minimal border radius** (4px buttons, 8–12px cards) and **subtle shadows** rather than heavy gradients — matching MedLink's professional, uncluttered design philosophy.
+- The AI voice agent is named **"Delfia"**, consistent with MedLink Global's existing AI voice agent branding.
+
+The interview screen intentionally departs slightly from the marketing site's layout — it's a focused, single-purpose screen for a patient in distress, so chrome is stripped down — but the color palette, typography, and component language remain consistent with the MedLink brand.
+
+---
+
 ## Architecture
 
 ### Monorepo with Separate Frontend/Backend
@@ -29,7 +43,7 @@ The interview screen is designed for the literal scenario described: a person on
 Rather than text labels alone, the AI state (listening, thinking, speaking) is communicated through a central animated orb with color, motion, and secondary visual cues:
 - **Listening** = green + audio waveform bars — the patient sees the AI is actively receiving
 - **Thinking** = amber + floating dots — conveys processing without feeling stalled
-- **Speaking** = purple/indigo + pulsing dots — distinct from listening
+- **Speaking** = brand purple + pulsing dots — distinct from listening, reinforces MedLink identity
 
 This solves the "uncomfortable silence" problem: when the AI is processing after a heavy disclosure, the patient sees warm amber animation and the label "Reflecting on what you shared..." rather than dead silence. After 15 seconds of silence during the listening state, the system proactively sends a comfort message ("Take your time. There's no rush here.").
 
@@ -63,10 +77,10 @@ The 50-concurrent-session cap is a hard constraint. The system:
 3. Automatically promotes queued patients when slots open (via periodic cleanup + session completion events)
 4. Gives patients honest messaging: their place in line, estimated wait, and the 988 crisis line if they need immediate help
 
-The wait screen is designed to be calming (animated orb, gentle language) rather than clinical ("Error: capacity exceeded").
+The wait screen is designed to feel calming and on-brand (animated orb, gentle language) rather than clinical ("Error: capacity exceeded").
 
-### Mock AI Service
-The AI voice agent is fully mocked with a structured clinical interview (15 questions). The mock includes:
+### Mock AI Service (Delfia)
+The AI voice agent is fully mocked with a structured clinical interview (15 questions), named Delfia to align with MedLink Global's existing AI agent. The mock includes:
 - **Crisis detection**: messages containing suicidal ideation trigger an immediate empathy response with the 988 crisis line
 - **Distress detection**: keywords like "hopeless" or "overwhelmed" trigger supportive acknowledgment before continuing
 - **Configurable timing**: thinking delays and speaking duration are calculated from word count to feel natural
@@ -77,7 +91,7 @@ The AI voice agent is fully mocked with a structured clinical interview (15 ques
 
 1. **End-to-end encryption for transcripts**: Transcripts contain PHI. In production, I'd implement client-side encryption before transmission and at-rest encryption in the database. The current prototype stores plaintext.
 
-2. **Real voice integration**: Web Speech API for speech-to-text/text-to-speech would make the interview genuinely voice-based. The UI is designed for this — the microphone button, AI speaking state, and audio waveform visualizations are all ready for real audio.
+2. **Real voice integration with Delfia**: Integrate with MedLink's actual voice AI provider for genuine speech-to-text/text-to-speech. The UI is designed for this — the microphone button, AI speaking state, and audio waveform visualizations are all ready for real audio.
 
 3. **Session analytics & monitoring**: Structured logging, session duration tracking, drop-off rates, and alerting (e.g., PagerDuty for sessions silently failing at 3am). The backend logs to stdout; production needs structured observability.
 
@@ -88,3 +102,5 @@ The AI voice agent is fully mocked with a structured clinical interview (15 ques
 6. **Gantt chart performance**: For patients with hundreds of events spanning decades, the current DOM-based rendering would need virtualization. Canvas or WebGL rendering (via something like Pixi.js) would handle larger datasets.
 
 7. **Testing**: Unit tests for transcript stitching logic, integration tests for session recovery flows, and Playwright E2E tests for the interview experience.
+
+8. **MaiNDS integration**: Connect the interview data pipeline into MedLink's MaiNDS diagnostic system for automated clinical scale scoring and provider-ready reports.

@@ -3,6 +3,12 @@ import path from 'path';
 
 dotenv.config();
 
+function parseCorsOrigin(raw?: string): string | string[] {
+  if (!raw) return 'http://localhost:5173';
+  const origins = raw.split(',').map((s) => s.trim()).filter(Boolean);
+  return origins.length === 1 ? origins[0] : origins;
+}
+
 export const config = {
   port: parseInt(process.env.PORT || '3001', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
@@ -10,7 +16,7 @@ export const config = {
   maxConcurrentSessions: parseInt(process.env.MAX_CONCURRENT_SESSIONS || '50', 10),
   sessionResumeWindowMinutes: parseInt(process.env.SESSION_RESUME_WINDOW_MINUTES || '30', 10),
   sessionExpireHours: parseInt(process.env.SESSION_EXPIRE_HOURS || '24', 10),
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  corsOrigin: parseCorsOrigin(process.env.CORS_ORIGIN),
 
   ai: {
     averageSessionDurationMinutes: 25,

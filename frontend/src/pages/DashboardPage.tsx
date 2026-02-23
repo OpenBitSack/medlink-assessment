@@ -26,24 +26,25 @@ export function DashboardPage() {
   return (
     <div className="min-h-screen bg-surface">
       {/* Header */}
-      <header className="border-b border-surface-lighter bg-surface-light/30">
+      <header className="border-b border-surface-border bg-surface-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <a href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                <svg className="w-4 h-4 text-primary-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center">
+                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
                 </svg>
               </div>
               <span className="text-sm font-semibold text-text-primary">MedLink</span>
             </a>
-            <span className="text-text-muted text-xs">/ Clinician Dashboard</span>
+            <div className="h-4 w-px bg-surface-border" />
+            <span className="text-text-muted text-xs font-medium">Clinician Dashboard</span>
           </div>
           <a
             href="/"
-            className="text-xs text-primary-light hover:text-primary transition-colors"
+            className="text-xs text-brand hover:text-brand-dark transition-colors font-medium"
           >
-            ← Back to Interview
+            ← Patient Interview
           </a>
         </div>
       </header>
@@ -51,28 +52,28 @@ export function DashboardPage() {
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {/* Patient info card */}
-        <div className="bg-surface-light rounded-2xl border border-surface-lighter p-5 mb-6">
+        <div className="bg-surface-white rounded-xl border border-surface-border p-5 mb-6 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h1 className="text-lg font-semibold text-text-primary">Patient Timeline</h1>
+              <h1 className="text-lg font-serif font-semibold text-text-primary">Patient Timeline</h1>
               <p className="text-text-secondary text-sm mt-0.5">Longitudinal health history — P001</p>
             </div>
-            <div className="flex gap-4 text-xs">
-              <div className="bg-surface rounded-lg px-3 py-2 border border-surface-lighter">
-                <span className="text-text-muted">Events</span>
-                <p className="text-text-primary font-semibold mt-0.5">{events.length}</p>
+            <div className="flex gap-3 text-xs">
+              <div className="bg-stat-bg text-white rounded-lg px-4 py-2.5 min-w-[80px]">
+                <span className="text-white/70 text-[10px] uppercase tracking-wider">Events</span>
+                <p className="font-bold text-lg mt-0.5">{events.length}</p>
               </div>
-              <div className="bg-surface rounded-lg px-3 py-2 border border-surface-lighter">
-                <span className="text-text-muted">Active</span>
-                <p className="text-safe font-semibold mt-0.5">
+              <div className="bg-stat-bg text-white rounded-lg px-4 py-2.5 min-w-[80px]">
+                <span className="text-white/70 text-[10px] uppercase tracking-wider">Active</span>
+                <p className="font-bold text-lg mt-0.5 text-emerald-300">
                   {events.filter((e) => e.status === 'Active').length}
                 </p>
               </div>
-              <div className="bg-surface rounded-lg px-3 py-2 border border-surface-lighter">
-                <span className="text-text-muted">Timespan</span>
-                <p className="text-text-primary font-semibold mt-0.5">
+              <div className="bg-stat-bg text-white rounded-lg px-4 py-2.5 min-w-[80px]">
+                <span className="text-white/70 text-[10px] uppercase tracking-wider">Span</span>
+                <p className="font-bold text-sm mt-1">
                   {events.length > 0
-                    ? `${new Date(Math.min(...events.map((e) => new Date(e.start_date).getTime()))).getFullYear()} — Present`
+                    ? `${new Date(Math.min(...events.map((e) => new Date(e.start_date).getTime()))).getFullYear()} — Now`
                     : 'N/A'}
                 </p>
               </div>
@@ -83,12 +84,17 @@ export function DashboardPage() {
         {/* Gantt Chart */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-brand/30 border-t-brand rounded-full animate-spin" />
           </div>
         ) : (
           <GanttChart events={events} />
         )}
       </main>
+
+      {/* Footer */}
+      <footer className="mt-12 bg-surface-white border-t border-surface-border text-text-muted py-6 px-4 text-center text-xs">
+        <p>© 2026 MedLink Global Inc. All rights reserved. — AI-Powered Precision Psychiatry Platform</p>
+      </footer>
     </div>
   );
 }
