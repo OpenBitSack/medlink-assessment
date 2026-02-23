@@ -1,0 +1,31 @@
+event_id,patient_id,event_category,event_subcategory,event_name,start_date,end_date,status,notes
+E001,P001,Medication,Psychiatric,Sertraline 50mg,2019-03-15,2020-01-10,Completed,Started for depression/anxiety. Discontinued due to side effects.
+E002,P001,Medication,Psychiatric,Sertraline 100mg,2020-01-11,2021-06-30,Completed,Dose increase after initial tolerance.
+E003,P001,Medication,Psychiatric,Bupropion 150mg,2021-07-01,,Active,Switched from sertraline. Current medication.
+E004,P001,Medication,Psychiatric,Alprazolam 0.5mg PRN,2019-06-01,2020-12-31,Completed,As-needed for acute anxiety episodes.
+E005,P001,Medication,Psychiatric,Trazodone 50mg,2022-01-15,,Active,Added for insomnia. Taken nightly.
+E006,P001,Medication,Non-Psychiatric,Lisinopril 10mg,2020-06-01,,Active,Hypertension management.
+E007,P001,Medication,Non-Psychiatric,Metformin 500mg,2021-01-01,,Active,Pre-diabetes management.
+E008,P001,Medication,Non-Psychiatric,Omeprazole 20mg,2019-09-01,2020-03-01,Completed,GERD treatment. Resolved.
+E009,P001,Medication,Non-Psychiatric,Amoxicillin 500mg,2022-08-10,2022-08-20,Completed,Sinus infection treatment.
+E010,P001,Medical Event,,Initial psychiatric evaluation,2019-03-01,2019-03-01,Completed,Diagnosed with MDD and GAD.
+E011,P001,Medical Event,,Emergency room visit - panic attack,2019-05-20,2019-05-20,Completed,Presented with chest pain; ruled cardiac. Diagnosed panic attack.
+E012,P001,Medical Event,,Therapy started - CBT,2019-04-01,2020-12-15,Completed,Weekly CBT sessions. 60 sessions total.
+E013,P001,Medical Event,,Hospitalization - suicidal ideation,2020-11-01,2020-11-08,Completed,7-day inpatient stay. Medication adjustment. Safety plan created.
+E014,P001,Medical Event,,Therapy resumed - DBT,2021-01-15,,Active,Dialectical behavior therapy. Biweekly sessions.
+E015,P001,Medical Event,,Annual physical exam,2022-01-05,2022-01-05,Completed,Routine checkup. Labs normal except elevated glucose.
+E016,P001,Medical Event,,Diabetes screening,2022-02-15,2022-02-15,Completed,A1C at 5.9%. Pre-diabetic. Started metformin.
+E017,P001,Medical Event,,Psychiatric medication review,2023-06-01,2023-06-01,Completed,Stable on current regimen. Continue bupropion + trazodone.
+E018,P001,Social/Life Event,,Job loss,2020-09-15,2020-09-15,Completed,Laid off during pandemic. Significant stressor.
+E019,P001,Social/Life Event,,Divorce proceedings initiated,2020-10-01,2021-03-15,Completed,Major life stressor contributing to hospitalization.
+E020,P001,Social/Life Event,,Moved to new city,2021-04-01,2021-04-01,Completed,Relocation for fresh start. New support system needed.
+E021,P001,Social/Life Event,,New employment started,2021-06-15,2021-06-15,Completed,Part-time remote work. Reduced stress.
+E022,P001,Social/Life Event,,Support group joined,2021-08-01,,Active,Weekly peer support group for depression.
+E023,P001,Social/Life Event,,New relationship began,2022-03-01,,Active,Stable supportive partnership.
+E024,P001,Medical Event,,Sleep study,2021-12-01,2021-12-01,Completed,Mild sleep apnea diagnosed. CPAP recommended.
+E025,P001,Medication,Non-Psychiatric,Vitamin D 2000IU,2022-01-10,,Active,Deficiency found on labs.
+E026,P001,Medical Event,,Therapy milestone - 2 years DBT,2023-01-15,2023-01-15,Completed,Significant improvement in emotional regulation.
+E027,P001,Social/Life Event,,Father passed away,2023-03-20,2023-03-20,Completed,Grief. Increased therapy frequency temporarily.
+E028,P001,Medical Event,,Crisis counseling,2023-03-25,2023-04-30,Completed,6 sessions grief counseling after father's death.
+E029,P001,Medication,Psychiatric,Bupropion increased to 300mg,2023-04-01,,Active,Dose increase during grief period.
+E030,P001,Social/Life Event,,Adopted a dog,2023-07-01,2023-07-01,Completed,Therapeutic benefit noted by treatment team.
