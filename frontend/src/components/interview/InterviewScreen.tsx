@@ -29,8 +29,8 @@ export function InterviewScreen() {
   const [isRecording, setIsRecording] = useState(false);
   const [showTranscript, setShowTranscript] = useState(false);
   const [patientId] = useState(() => localStorage.getItem('medlink_patient_id') || crypto.randomUUID());
-  const [silenceTimer, setSilenceTimer] = useState(0);
-  const silenceRef = useRef<ReturnType<typeof setInterval>>();
+  const [, setSilenceTimer] = useState(0);
+  const silenceRef = useRef<ReturnType<typeof setInterval>>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

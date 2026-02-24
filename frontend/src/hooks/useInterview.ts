@@ -31,7 +31,7 @@ export function useInterview(): UseInterviewReturn {
   const [estimatedWait, setEstimatedWait] = useState<number | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const queuePollRef = useRef<ReturnType<typeof setInterval>>();
+  const queuePollRef = useRef<ReturnType<typeof setInterval>>(undefined);
   const activeSessionIdRef = useRef<string | null>(null);
   const sessionStatusRef = useRef<SessionStatus | null>(null);
 
