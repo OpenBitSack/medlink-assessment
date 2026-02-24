@@ -24,7 +24,7 @@ export function DashboardPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen bg-surface flex flex-col">
       {/* Header */}
       <header className="border-b border-surface-border bg-surface-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
@@ -50,7 +50,7 @@ export function DashboardPage() {
       </header>
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full">
         {/* Patient info card */}
         <div className="bg-surface-white rounded-xl border border-surface-border p-5 mb-6 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -92,7 +92,7 @@ export function DashboardPage() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-12 bg-surface-white border-t border-surface-border text-text-muted py-6 px-4 text-center text-xs">
+      <footer className="bg-surface-white border-t border-surface-border text-text-muted py-6 px-4 text-center text-xs">
         <p>© 2026 MedLink Global Inc. All rights reserved. — AI-Powered Precision Psychiatry Platform</p>
       </footer>
     </div>
